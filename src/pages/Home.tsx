@@ -24,12 +24,12 @@ const Home = () => {
 
     const natigate = useNavigate();
 
-    const validateUser = async  (email: string) => {
-        const loggendIn = await login(email);
+    const validateUser = async  (email: string, senha: string) => {
+        const loggendIn = await login(email, senha);
 
         if(!loggendIn){
             SetIsLoggedIn(false);
-            return alert("Email inválido!");
+            return alert("Email ou senha inválido!");
         }
 
         SetIsLoggedIn(true);
@@ -59,7 +59,7 @@ const Home = () => {
                 </InputGroup>
             </Stack>
             <Center>
-                <ButtonDefault actionButton={() => validateUser(email)} />
+                <ButtonDefault actionButton={() => validateUser(email, senha)} />
             </Center>
         </Card>
     )
