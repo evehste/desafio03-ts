@@ -1,62 +1,66 @@
-import { Center, SimpleGrid, Spinner } from "@chakra-ui/react"
-import { useParams, useNavigate } from "react-router-dom"
-import { useContext, useEffect, useState } from "react"
-import { api } from "../api"
-import CardInfo from "../components/CardInfo"
-import { AppContext } from "../components/AppContext"
+import { useEffect, useState, useContext } from "react";
+import {Center, SimpleGrid, Spinner } from "@chakra-ui/react"
+import { useParams, useNavigate } from "react-router-dom";
+import CardInfo from "../components/CardInfo";
+import { api } from '../api';
+import { AppContext } from "../components/AppContext";
 
-interface UserData {
-    email: string
-    password: string
-    name: string
+interface IUserData {
+    id: string,
+    email: string,
+    password: string,
+    name: string,
     balance: number
-    id: string
-}
+  }
 
 const Conta = () => {
-    const [ userData, setUserData ] = useState<null | UserData>()
-    const { id } = useParams()
-    const navigate = useNavigate()
+    const [userData, setUserData] = useState<null | IUserData>();
 
-    const { isLoggedIn } = useContext(AppContext)
+    const {id} = useParams(); //parametro da urls
+    const navigate = useNavigate();
 
-    !isLoggedIn && navigate('/')
 
-    useEffect(() => {
-        const getData = async () => {
-            const data: any | UserData = await api
-            setUserData(data)
-        }
+    const {isLoggedIn} = useContext(AppContext); //contexto global
+    !isLoggedIn && navigate("/");
 
-        getData()
-    }, [])
+    useEffect(() => { //usando para função assincrona
+      const getData = async () => {
+        const data: any | IUserData = await api;
+        setUserData(data);
+      }
+      getData();
+    }, []);
 
-    const actualData = new Date()
+    const actualDate= new Date();
+    const formatActualDate = `${actualDate.getDay()}/${actualDate.getMonth()}/${actualDate.getFullYear()} ${actualDate.getHours()}:${actualDate.getMinutes()}`;
 
-    if(userData && id !== userData.id) {
-        navigate('/')
+    
+
+    if(userData && id !== userData.id){
+        navigate("/");
     }
-  
+
     return (
         <Center>
-            <SimpleGrid columns={2} spacing={8} paddingTop={16}>
+            <SimpleGrid columns={2} spacing={4}>
                 {
-                    userData === undefined || userData === null ?
-                    (  
+                    (userData === undefined || userData === null) ?
+                    (
                         <Center>
-                            <Spinner size='xl' color='white'/>
+                            <Spinner size={"xl"} color="white"/>
                         </Center>
-                    ) : 
+                    ):
                     (
                         <>
-                            <CardInfo mainContent={`Bem vinda ${userData?.name}`} content={`${actualData.getDay()} / ${actualData.getMonth()} / ${actualData.getFullYear()} ${actualData.getHours()}:${actualData.getMinutes()}`} />
-                            <CardInfo mainContent='Saldo' content={`R$ ${userData.balance}`}/>
+                            <CardInfo mainContent={`Bem Vindo(a) ${userData?.name}`} content={formatActualDate}/>
+                            <CardInfo mainContent={"Saldo"} content={`R$ ${userData?.balance}`} />
                         </>
                     )
-                }
-            </SimpleGrid>    
+                    }
+            </SimpleGrid>
         </Center>
     )
 }
+//
 
-export default Conta
+export default Conta;

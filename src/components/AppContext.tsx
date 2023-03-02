@@ -1,31 +1,32 @@
-import { createContext, useEffect, useState } from "react"
-import { getAllLocalStorage } from "../services/storage"
+import { createContext, useState, useEffect } from "react";
+import { getAllLocalStorage } from "../services/storage";
 
 interface IAppContext {
-    user: string,
     isLoggedIn: boolean,
-    setIsLoggedIn: (isLoggedIn: boolean) => void
-}
+    user: string,
+    SetIsLoggedIn: (isLoggedIn: boolean) => void
+  }
   
-export const AppContext = createContext({} as IAppContext)
+  export const AppContext = createContext({} as IAppContext);
   
-export const AppContextProvider = ({ children }: any) => {
-    const [ isLoggedIn, setIsLoggedIn ] = useState<boolean>(false)
+  export const AppContextProvider = ({children} : any) => {
+    const [ isLoggedIn, SetIsLoggedIn ] = useState<boolean>(false);
 
-    const storage = getAllLocalStorage()
+    const Storage = getAllLocalStorage();
 
-    useEffect(() => {
-      if(storage){
-        const { login } = JSON.parse(storage)
-        setIsLoggedIn(login)
+    useEffect(() => { // indicar que precisar reinderizar a página.
+      if(Storage){
+        const { login } = JSON.parse(Storage);
+        SetIsLoggedIn(login);
       }
     }, [])
 
-    const user = 'nathally'
-  
+
+    const user = "Eveh";
+
     return (
-      <AppContext.Provider value={{ user, isLoggedIn, setIsLoggedIn }}>
-        { children }
+      <AppContext.Provider value={{isLoggedIn, user, SetIsLoggedIn}}>
+        {children}
       </AppContext.Provider>
     )
-}
+  }

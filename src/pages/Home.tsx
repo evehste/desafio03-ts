@@ -1,45 +1,68 @@
-import { Box, Center, Input } from "@chakra-ui/react";
-import { MouseEventHandler, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../components/AppContext";
-import { Card } from "../components/Card";
-import DButton from "../components/DButton";
-import { login } from "../services/login";
-import { changeLocalStorage } from "../services/storage";
+import { useContext, useState } from 'react';
+import { 
+    Input,  
+    Center,
+    Stack,
+    Heading,
+    InputLeftElement,
+    InputGroup,
+} from '@chakra-ui/react';
+import {EmailIcon, LockIcon} from '@chakra-ui/icons'
+import { login } from '../services/login';
+import { ButtonDefault } from '../components/Button/ButtonDefault';
+import { Card } from '../components/Card';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../components/AppContext';
+import { changeLocalStorage } from '../services/storage';
+
 
 const Home = () => {
-    const [ email, setEmail ] = useState<string>('')
-    const { setIsLoggedIn } = useContext(AppContext)
-    const navigate = useNavigate()
+    const [email, setEmail ] = useState<string>("");
+    const [senha, setSenha] = useState<string>("");
 
-    const validateUser = async (email: string) => {
-        const loggedIn = await login(email)
+    const {SetIsLoggedIn} = useContext(AppContext);
 
-        if(!loggedIn){
-            return alert('Email inválido')
+    const natigate = useNavigate();
+
+    const validateUser = async  (email: string) => {
+        const loggendIn = await login(email);
+
+        if(!loggendIn){
+            SetIsLoggedIn(false);
+            return alert("Email inválido!");
         }
 
-        setIsLoggedIn(true)
-        changeLocalStorage({ login: true })
-        navigate('/conta/1')
+        SetIsLoggedIn(true);
+        changeLocalStorage({ login: true });
+        natigate("/conta/1");
     }
-  
+
     return (
-        <Box padding="25px">
-            <Card>
-                <Center>
-                    <h1>Faça o login</h1>
-                </Center>
-                <Input placeholder="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-                <Input placeholder="password" />
-                <Center>
-                    <DButton
-                        onClick={() => validateUser(email)}
+        <Card>
+            <Center>
+                <Heading color='#805ad5' as='h2' size='lg' marginBottom="20px">Login</Heading>
+            </Center>
+            <Stack spacing={5}>
+                <InputGroup>
+                    <InputLeftElement pointerEvents='none' children={<EmailIcon color='gray.300' />} />
+                    <Input placeholder={"Email"} type={"email"} 
+                        value={email} 
+                        onChange={(event) => setEmail(event.target.value)}
                     />
-                </Center>
-            </Card>
-        </Box>
-    );
+                </InputGroup>
+                <InputGroup>
+                    <InputLeftElement pointerEvents='none' children={<LockIcon color='gray.300' />} />
+                    <Input placeholder={"Senha"} type={"senha"}
+                    value={senha}
+                    onChange={(event) => setSenha(event.target.value)}
+                    />
+                </InputGroup>
+            </Stack>
+            <Center>
+                <ButtonDefault actionButton={() => validateUser(email)} />
+            </Center>
+        </Card>
+    )
 }
 
 export default Home;
